@@ -34,7 +34,6 @@ export function Home() {
 
     foundItem.done = !foundItem.done;
     setTasks(updatedTasks);
-    console.log(tasks);
   }
 
   function handleRemoveTask(id: number) {
