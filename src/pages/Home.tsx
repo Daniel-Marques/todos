@@ -11,6 +11,11 @@ interface ITask {
   done: boolean;
 }
 
+export interface EditTaskArgs {
+  taskId: number;
+  taskNewTitle: string;
+}
+
 export function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
@@ -18,11 +23,10 @@ export function Home() {
     const taskFind = tasks.find((task) => task.title === newTaskTitle);
 
     if (taskFind) {
-      Alert.alert(
+      return Alert.alert(
         'Task já cadastrada',
         'Você não pode cadastrar uma task com o mesmo nome.'
       );
-      return;
     }
 
     const task: ITask = {
@@ -36,7 +40,6 @@ export function Home() {
 
   function handleToggleTaskDone(id: number) {
     const updatedTasks = tasks.map((task) => ({ ...task }));
-
     const foundItem = updatedTasks.find((item) => item.id === id);
 
     if (!foundItem) return;
@@ -46,7 +49,32 @@ export function Home() {
   }
 
   function handleRemoveTask(id: number) {
-    setTasks((oldState) => oldState.filter((task) => task.id !== id));
+    Alert.alert(
+      'Remover item',
+      'Tem certeza que você deseja remover esse item?',
+      [
+        {
+          text: 'Não',
+          style: 'cancel',
+        },
+        {
+          text: 'Sim',
+          onPress: () =>
+            setTasks((oldState) => oldState.filter((task) => task.id !== id)),
+          style: 'destructive',
+        },
+      ]
+    );
+  }
+
+  function handleEditTask({ taskId, taskNewTitle }: EditTaskArgs) {
+    const updatedTasks = tasks.map((task) => ({ ...task }));
+    const foundItem = updatedTasks.find((item) => item.id === taskId);
+
+    if (!foundItem) return;
+
+    foundItem.title = taskNewTitle;
+    setTasks(updatedTasks);
   }
 
   return (
@@ -59,6 +87,7 @@ export function Home() {
         tasks={tasks}
         toggleTaskDone={handleToggleTaskDone}
         removeTask={handleRemoveTask}
+        editTask={handleEditTask}
       />
     </View>
   );
